@@ -1,7 +1,8 @@
-from random import shuffle
 import time
+from random import shuffle
+
 from flask import Flask, request, render_template
-from wtforms.validators import InputRequired, Email
+from wtforms.validators import InputRequired
 from flask_wtf import FlaskForm
 from wtforms import StringField, RadioField
 from edu_site.data import goals, teachers, days
@@ -22,9 +23,7 @@ class RequestForm(FlaskForm):
     client_time = StringField('client_time', [InputRequired()])
     client_teacher = StringField('client_teacher', [InputRequired()])
     phone = StringField('phone', [InputRequired()])
-    goal = RadioField('goal', validators=[InputRequired()],
-                      choices=[("travel", "Для путешествий"), ("study", "Для учебы"), ("work", "Для работы"),
-                               ("relocate", "Для переезда")], )
+    goal = RadioField('goal', validators=[InputRequired()], choices=[(key, value) for key, value in goals.items()], )
     free_time = RadioField('free_time', validators=[InputRequired()],
                            choices=[("1", "1-2 часа в неделю"), ("3", "3-5 часов в неделю"),
                                     ("5", "5-7 часов в неделю"),
@@ -118,7 +117,7 @@ def render_booking_done():
             'phone': form.phone.data,
             'date': form.client_weekday.data,
             'client_time': form.client_time.data,
-            'teacher':  form.client_teacher.data
+            'teacher': form.client_teacher.data
         }
         # сохраняем данные из формы в аналог БД
         g_data.set_to_data(str(req_id), request_info, 'booking')
